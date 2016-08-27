@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Arduino Ajax I/O</title>
+               <script>
+		strLED1 = "";
+		strLED2 = "";
+		strLED3 = "";
+		strLED4 = "";
+		var LED3_state = 0;
+		var LED4_state = 0;
+		function sendForm()
+		{
+			nocache = "&nocache=" + Math.random() * 1000000;
+            var request = new XMLHttpRequest();
+			// send HTTP GET request with new device's number, pin and name
+            request.onreadystatechange = function()
+			{
+				if (this.readyState == 4) {
+					if (this.status == 200) {
+						if (this.responseText != null) {
+                            document.getElementById("demo").innerHTML = request.responseText;
+        }}}
+            }
+            request.open("GET", "new_device" + nocache, true);
+			request.send(null);
+            
+        }
+	</script>
+        
+    </head>
+    <body>
+        <h1>HELLO!</h1>
+        <!--
+<form action="HelloForm" method="GET">
+First Name: <input type="text" name="first_name">
+<br />
+Last Name: <input type="text" name="last_name" />
+<input type="submit" value="Submit" />
+</form>
+-->
+        <button type ="button" onclick="sendForm()"> Add Device </button>
+        <div id="demo">TEXT HERE</div>
+        <a href="index.html">back to index</a>
+    </body>
+</html>

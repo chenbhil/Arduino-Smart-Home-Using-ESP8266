@@ -1,0 +1,2 @@
+#define ssidFromInclude ""
+#define passFromInclude ""
