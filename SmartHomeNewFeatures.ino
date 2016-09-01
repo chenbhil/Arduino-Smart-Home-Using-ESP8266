@@ -3,17 +3,19 @@
 #include "FS.h"  //to use SPIFFS
 #include "WebAuthentication.h"
 #include "ssidAndPass.h"
+
 //#include "pgmspace.h"
 #define HTTPuser "123"
 #define HTTPpass "123"
 #define maxDevices 10
 class Device {
   public:
-    bool enable;
-    int pin;
-    String itsName[15];
+    int pin;//pin
+    int enable;//enabled?
+    int ON;//On or off?
+    String itsName;//name
 };
-//Device device[maxDevices];
+Device device[maxDevices];
 void serveFileToClient(String fileFromHTTP, WiFiClient cl);
 void XML_response(WiFiClient cl);
 void SetLEDs(void);
@@ -29,9 +31,15 @@ char SWITCH1  = 14, SWITCH2 = 12, SWITCH3 = 13;
 // specify the port to listen on as an argument
 WiFiServer server(80);
 File webFile;
-int val;
+File devicesFile;
+char i;
 void setup()
-{
+{ /*EEPROM.begin(512);
+    addr += EEPROM.get(addr, sss);
+    EEPROM.commit();
+    EEPROM.end();
+  */
+  String fileContent;
   pinMode(LED1, OUTPUT);
   digitalWrite(LED1, 0);
   pinMode(LED2, OUTPUT);
@@ -57,8 +65,6 @@ void setup()
   Serial.print("Server started at: ");
   Serial.println(WiFi.localIP());
 
-
-
   // initialize SD card
   Serial.println("Initializing SPIFFS filesystem...");
   if (!SPIFFS.begin()) {
@@ -72,8 +78,40 @@ void setup()
     return;  // can't find index file
   }
   Serial.println("SUCCESS - Found index.htm file.");
-//  device[2].itsName[20] = "000000";
+  //device[2].itsName[20] = "000000";
   //Serial.println(device[2].itsName[20]);
+  /* devicesFile = SPIFFS.open("/devices.txt","w");
+    if (!devicesFile) {
+     Serial.println("devicesFile open failed");
+    }
+    devicesFile.print("00000|11|22222");
+    devicesFile.close();
+  */
+  devicesFile = SPIFFS.open("/devices.txt", "r");
+  if (!devicesFile) {
+    Serial.println("devicesFile open failed");
+  }
+  Serial.println("SUCCESS - Found devices file.\nReading...");
+  //fileContent = devicesFile.readString();
+  //Serial.println(fileContent);
+  //char current;
+  for (i = 0; i < 10; i++)
+  {
+    device[i].pin = devicesFile.readStringUntil('|').toInt();
+    device[i].enable = devicesFile.readStringUntil('|').toInt();
+    device[i].ON = devicesFile.readStringUntil('|').toInt();
+    device[i].itsName = devicesFile.readStringUntil('\n');
+    
+    Serial.println(device[i].enable);
+    Serial.println(device[i].pin);
+    Serial.println(device[i].itsName);
+  }
+
+  /*
+    Serial.println(devicesFile.readStringUntil('|'));
+    Serial.println(devicesFile.readStringUntil('|'));
+    Serial.println(devicesFile.readStringUntil('\n'));
+  */devicesFile.close();
 }
 
 void loop() {
@@ -121,7 +159,6 @@ void loop() {
   client.flush();
 
   // Match the request
-  int val;
   if (lookingForFile) {
     Serial.println(req.indexOf("HTTP"));
     //requestedFile = req.substring(4, req.indexOf("HTTP") - 1);//GET /XXXXXXX HTTP
@@ -240,9 +277,16 @@ void XML_response(WiFiClient cl)
 }
 void SetLEDs(void)
 { Serial.println("leds started");
-
+  int n = 1;
   // LED 1 (pin 6)
-  if (req.indexOf("LED1=1") != -1) {
+  int deviceIndex;
+  deviceIndex = req.indexOf("LED" + String(n));
+  Serial.println(deviceIndex);
+  //Serial.println(req.indexOf("LED" + String(n)));
+  Serial.println(req.substring(deviceIndex, deviceIndex + 3));
+  //Serial.println(req.substring(req.indexOf("LED" + String(n)),req.indexOf("LED" + String(n)) + 3));
+  if (req.indexOf("LED" + String(n) + "=1") != -1) {
+    //if (req.indexOf("LED1=1") != -1) {
     LED_state[0] = 1;  // save LED state
     digitalWrite(LED1, HIGH);
   }
