@@ -102,8 +102,9 @@ void setup()
     device[i].ON = devicesFile.readStringUntil('|').toInt();
     device[i].itsName = devicesFile.readStringUntil('\n');
     
-    Serial.println(device[i].enable);
     Serial.println(device[i].pin);
+    Serial.println(device[i].enable);
+    Serial.println(device[i].ON);
     Serial.println(device[i].itsName);
   }
 
