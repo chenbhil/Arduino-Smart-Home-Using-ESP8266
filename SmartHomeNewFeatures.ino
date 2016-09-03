@@ -15,6 +15,9 @@ class Device {
     int ON;//On or off?
     String itsName;//name
 };
+
+void XML_response_new(WiFiClient cl);
+IPAddress ip(10, 0, 0, 13);
 Device device[maxDevices];
 void serveFileToClient(String fileFromHTTP, WiFiClient cl);
 void XML_response(WiFiClient cl);
@@ -53,8 +56,18 @@ void setup()
   pinMode(SWITCH3, INPUT);
   Serial.begin(115200);       // for debugging
   delay(10);
+
+  WiFi.macAddress(MAC_array);
+  for (int i = 0; i < sizeof(MAC_array); ++i) {
+    sprintf(MAC_char, "%s%02x:", MAC_char, MAC_array[i]);
+  }
+
+  Serial.println(MAC_char);
+
+  //- See more at: http://www.esp8266.com/viewtopic.php?f=29&t=3587#sthash.Uyi5ezId.dpuf
   Serial.print("\nConnecting to ");
   Serial.println(ssid);
+  //WiFi.config(ip);
   WiFi.begin(ssid, password); //connect via WIFI
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -78,30 +91,18 @@ void setup()
     return;  // can't find index file
   }
   Serial.println("SUCCESS - Found index.htm file.");
-  //device[2].itsName[20] = "000000";
-  //Serial.println(device[2].itsName[20]);
-  /* devicesFile = SPIFFS.open("/devices.txt","w");
-    if (!devicesFile) {
-     Serial.println("devicesFile open failed");
-    }
-    devicesFile.print("00000|11|22222");
-    devicesFile.close();
-  */
   devicesFile = SPIFFS.open("/devices.txt", "r");
   if (!devicesFile) {
     Serial.println("devicesFile open failed");
   }
   Serial.println("SUCCESS - Found devices file.\nReading...");
-  //fileContent = devicesFile.readString();
-  //Serial.println(fileContent);
-  //char current;
   for (i = 0; i < 10; i++)
   {
     device[i].pin = devicesFile.readStringUntil('|').toInt();
     device[i].enable = devicesFile.readStringUntil('|').toInt();
     device[i].ON = devicesFile.readStringUntil('|').toInt();
     device[i].itsName = devicesFile.readStringUntil('\n');
-    
+
     Serial.println(device[i].pin);
     Serial.println(device[i].enable);
     Serial.println(device[i].ON);
@@ -189,6 +190,20 @@ void loop() {
     }
     serveFileToClient(requestedFile, client);
   }
+
+  else if (firstLine.indexOf("ajax_inputss") != -1) {
+    Serial.println("NEW ajax requested");
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: text/xml");
+    client.println("Connection: keep-alive");
+    client.println();
+    Serial.println("HTTP RESPONSE ENDED");
+    SetLEDs();
+    // send XML file containing input states
+    XML_response_new(client);
+    Serial.println("New XML Sent");
+
+  }
   else if (firstLine.indexOf("ajax_inputs") != -1) {
     Serial.println("ajax requested");
     client.println("HTTP/1.1 200 OK");
@@ -208,7 +223,11 @@ void loop() {
     client.println("Content-Type: text/plain");
     client.println("Connection: close");
     client.println();
-    client.print("yo yo yo");
+    for (i = 0; i < 10; i++) {
+      client.println(device[i].itsName);
+
+
+    }
   }
   else if (requestedFile == "/") {
     //client.stop();
@@ -351,5 +370,36 @@ void serveFileToClient(String fileFromHTTP, WiFiClient cl) {
     Serial.println("Can't find file");
   }
 
+
+}
+
+void XML_response_new(WiFiClient cl)
+{
+  int count;                 // used by 'for' loops
+  int sw_arr[] = {SWITCH1, SWITCH2, SWITCH3};  // pins interfaced to switches
+  Serial.println("here");
+  cl.print("<?xml version = \"1.0\"?>");
+  Serial.println("there");
+  cl.print("<devices>");
+  // read devices
+  for (count = 0; count < 10; count++) {
+    cl.print("<device>");
+    cl.print("<pin>");//pin enable on name
+      cl.print(device[count].pin);
+      cl.print("</pin>");
+    cl.print("<enable>");//pin enable on name
+      cl.print(device[count].enable);
+      cl.print("</enable>");
+      cl.print("<on>");//pin enable on name
+      cl.print(device[count].ON);
+      cl.print("</on>");
+      cl.print("<name>");//pin enable on name
+      cl.print(device[count].itsName);
+      cl.print("</name>");
+    cl.println("</device>");
+  }
+  cl.print("</devices>");
+
+  Serial.println("XML function ended");
 
 }
