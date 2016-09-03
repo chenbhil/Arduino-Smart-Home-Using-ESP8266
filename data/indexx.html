@@ -1,1 +1,79 @@
-<!DOCTYPE html><html> <head> <title>Arduino Ajax I/O</title> <style>.IO_box{float: left;margin: 0 20px 20px 0;border: 1px solid blue;padding: 0 5px 0 5px;width: 120px;}h1{font-size: 120%;color: blue;margin: 0 0 10px 0;}h2{font-size: 85%;color: #5734E6;margin: 5px 0 5px 0;}p, form, button{font-size: 80%;color: #252525;}.small_text{font-size: 70%;color: #737373;}</style> </head> <body onload="GetArduinoIO()"> <h1>Arduino Ajax I/O</h1><div class="IO_box"><h2>Switch Inputs</h2><p class="small_text">D0: used by serial RX</p><p class="small_text">D1: used by serial TX</p><p>Switch 1 (D5): <span class="switches">...</span></p><p>Switch 2 (D6): <span class="switches">...</span></p><p class="small_text">D4: used by Ethernet shield</p><p>Switch 3 (D7): <span class="switches">...</span></p></div><div class="IO_box"><h2>LEDs Using Checkboxes</h2><form id="check_LEDs" name="LED_form"><input type="checkbox" name="LED1" value="0" onclick="GetCheck()"/>LED 1 (D0)<br/><br/><input type="checkbox" name="LED2" value="0" onclick="GetCheck()"/>LED 2 (D1)<br/><br/></form></div><div class="IO_box"><h2>LEDs Using Buttons</h2><button type="button" id="LED3" onclick="GetButton1()">LED 3 is OFF (D2)</button><br/><br/><button type="button" id="LED4" onclick="GetButton2()">LED 4 is OFF (D4)</button><br/><br/><p class="small_text">D10 to D13 used by Ethernet shield</p></div><a href="controlPanel.html">Control - Panel</a> </body> <script>strLED1="";strLED2="";strLED3="";strLED4="";var LED3_state=0;var LED4_state=0;function GetArduinoIO(){nocache="&nocache=" + Math.random() * 1000000;var request=new XMLHttpRequest();request.onreadystatechange=function(){if (this.readyState==4){if (this.status==200){if (this.responseXML !=null){var num_an=this.responseXML.getElementsByTagName('switch').length;for (count=0; count < num_an; count++){document.getElementsByClassName("switches")[count].innerHTML=this.responseXML.getElementsByTagName('switch')[count].childNodes[0].nodeValue;}if (this.responseXML.getElementsByTagName('LED')[0].childNodes[0].nodeValue==="checked"){document.LED_form.LED1.checked=true;}else{document.LED_form.LED1.checked=false;}if (this.responseXML.getElementsByTagName('LED')[1].childNodes[0].nodeValue==="checked"){document.LED_form.LED2.checked=true;}else{document.LED_form.LED2.checked=false;}if (this.responseXML.getElementsByTagName('LED')[2].childNodes[0].nodeValue==="on"){document.getElementById("LED3").innerHTML="LED 3 is ON (D2)";LED3_state=1;}else{document.getElementById("LED3").innerHTML="LED 3 is OFF (D2)";LED3_state=0;}if (this.responseXML.getElementsByTagName('LED')[3].childNodes[0].nodeValue==="on"){document.getElementById("LED4").innerHTML="LED 4 is ON (D4)";LED4_state=1;}else{document.getElementById("LED4").innerHTML="LED 4 is OFF (D4)";LED4_state=0;}}}}}request.open("GET", "ajax_inputs" + strLED1 + strLED2 + strLED3 + strLED4 + nocache, true);request.send(null);setTimeout('GetArduinoIO()', 1000);strLED1="";strLED2="";strLED3="";strLED4="";}function GetCheck(){if (LED_form.LED1.checked){strLED1="&LED1=1";}else{strLED1="&LED1=0";}if (LED_form.LED2.checked){strLED2="&LED2=1";}else{strLED2="&LED2=0";}}function GetButton1(){if (LED3_state===1){LED3_state=0;strLED3="&LED3=0";}else{LED3_state=1;strLED3="&LED3=1";}}function GetButton2(){if (LED4_state===1){LED4_state=0;strLED4="&LED4=0";}else{LED4_state=1;strLED4="&LED4=1";}}</script></html>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Arduino Ajax I/O</title>
+    
+	<style>
+		.IO_box {
+			float: left;
+			margin: 0 20px 20px 0;
+			border: 1px solid blue;
+			padding: 0 5px 0 5px;
+			width: 120px;
+		}
+		h1 {
+			font-size: 120%;
+			color: blue;
+			margin: 0 0 10px 0;
+		}
+		h2 {
+			font-size: 85%;
+			color: #5734E6;
+			margin: 5px 0 5px 0;
+		}
+		p, form, button {
+			font-size: 80%;
+			color: #252525;
+		}
+		.small_text {
+			font-size: 70%;
+			color: #737373;
+		}
+	</style>
+    </head>
+    <body onload="GetArduinoIO()"> <!--onload="GetArduinoIO()"-->
+        <h1>Arduino Ajax I/O</h1>
+		<div class="IO_box">
+			<h2>Devices:</h2>
+            <p>log 1: <span class="log">...</span></p>
+            <p>log 2: <span class="log">...</span></p>
+            <p>log 3: <span class="log">...</span></p>
+            <p>log 4: <span class="log">...</span></p>
+            <p>log 5: <span class="log">...</span></p>
+            <p>log 6: <span class="log">...</span></p>
+			<p>Device 1: <span class="devices">...</span></p>
+			<p>Device 2:<span class="devices">...</span></p>
+        </div>
+        <a href = "controlPanel.html">Control - Panel</a>
+    </body>
+        <script>
+            function GetArduinoIO()
+		{
+            document.getElementsByClassName("log")[0].innerHTML = "got arduino";
+			nocache = "&nocache=" + Math.random() * 1000000;
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function()
+			{
+				if (this.readyState == 4) {
+                    document.getElementsByClassName("log")[1].innerHTML = "readyStateChange";
+					if (this.status == 200) {
+                        document.getElementsByClassName("log")[2].innerHTML = "status 200";
+						if (this.responseXML != null) {
+                            document.getElementsByClassName("log")[3].innerHTML = "responseNull";
+							// XML file received - contains analog values, switch values and LED states
+							// get switch inputs
+							var num_an = this.responseXML.getElementsByTagName('device').length;
+                            document.getElementsByClassName("log")[4].innerHTML = num_an;
+							for (count = 0; count < 2; count++) {
+								document.getElementsByClassName("devices")[count].innerHTML =
+									this.responseXML.getElementsByTagName('pin')[count].childNodes[0].nodeValue;
+							}			}
+					}
+				}
+			}
+            request.open("GET", "ajax_inputss" + nocache, true);
+			request.send(null);
+			setTimeout('GetArduinoIO()', 5000);
+        }
+	</script>
+</html>
