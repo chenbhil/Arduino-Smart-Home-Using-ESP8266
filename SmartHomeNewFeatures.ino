@@ -225,8 +225,10 @@ void loop() {
     client.println();
     for (i = 0; i < 10; i++) {
       client.println(device[i].itsName);
-
-
+    }
+    client.print("<br>");
+    for (i = 0; i < 10; i++) {
+      client.println(device[i].ON);
     }
   }
   else if (requestedFile == "/") {
@@ -249,6 +251,12 @@ void loop() {
 
     }
     // Set GPIO2 according to the request
+  }
+  else {
+    client.println("HTTP/1.1 404 Not Found");
+    client.println("Content-Type: text/html");
+    client.println("Connection: keep-alive");
+    client.println();
   }
   delay(1);      // give the web browser time to receive the data
   //client.stop(); // Commented out because the client is destroyed in the new LOOP();
@@ -378,28 +386,51 @@ void XML_response_new(WiFiClient cl)
   int count;                 // used by 'for' loops
   int sw_arr[] = {SWITCH1, SWITCH2, SWITCH3};  // pins interfaced to switches
   Serial.println("here");
+  /*webFile = SPIFFS.open("/devicess.txt", "w");        // open web page file
+    if (webFile) {
+    webFile.print("<?xml version = \"1.0\"?>");
+  */
   cl.print("<?xml version = \"1.0\"?>");
   Serial.println("there");
+  //webFile.print("<devices>");
   cl.print("<devices>");
   // read devices
   for (count = 0; count < 10; count++) {
     cl.print("<device>");
     cl.print("<pin>");//pin enable on name
-      cl.print(device[count].pin);
-      cl.print("</pin>");
+    cl.print(device[count].pin);
+    cl.print("</pin>");
     cl.print("<enable>");//pin enable on name
-      cl.print(device[count].enable);
-      cl.print("</enable>");
-      cl.print("<on>");//pin enable on name
-      cl.print(device[count].ON);
-      cl.print("</on>");
-      cl.print("<name>");//pin enable on name
-      cl.print(device[count].itsName);
-      cl.print("</name>");
+    cl.print(device[count].enable);
+    cl.print("</enable>");
+    cl.print("<on>");//pin enable on name
+    cl.print(device[count].ON);
+    cl.print("</on>");
+    cl.print("<name>");//pin enable on name
+    cl.print(device[count].itsName);
+    cl.print("</name>");
     cl.println("</device>");
   }
   cl.print("</devices>");
-
+  /*for (count = 0; count < 10; count++) {
+    webFile.print("<device>");
+    webFile.print("<pin>");//pin enable on name
+    webFile.print(device[count].pin);
+    webFile.print("</pin>");
+    webFile.print("<enable>");//pin enable on name
+    webFile.print(device[count].enable);
+    webFile.print("</enable>");
+    webFile.print("<on>");//pin enable on name
+    webFile.print(device[count].ON);
+    webFile.print("</on>");
+    webFile.print("<name>");//pin enable on name
+    webFile.print(device[count].itsName);
+    webFile.print("</name>");
+    webFile.println("</device>");
+    }
+    webFile.print("</devices>");
+  */
   Serial.println("XML function ended");
 
 }
+//}
