@@ -1,73 +1,11 @@
-<?xml version = \"1.0\"?>
-<devices>
-    <device>
-        <pin>
-            1
-        </pin>
-        <enable>
-            1
-        </enable>
-        <on>
-            1
-        </on>
-        <name>
-            deviceno1
-        </name>
-    </device>
-    <device>
-        <pin>
-            1
-        </pin>
-        <enable>
-            2
-        </enable>
-        <on>
-            3
-        </on>
-        <name>
-            deviceno2
-        </name>
-    </device>
-    <device>
-        <pin>
-            1
-        </pin>
-        <enable>
-            3
-        </enable>
-        <on>
-            2
-        </on>
-        <name>
-            deviceno3
-        </name>
-    </device>
-    <device>
-        <pin>
-            1
-        </pin>
-        <enable>
-            1
-        </enable>
-        <on>
-            1
-        </on>
-        <name>
-            deviceno4
-        </name>
-    </device>
-    <device>
-        <pin>
-            1
-        </pin>
-        <enable>
-            1
-        </enable>
-        <on>
-            1
-        </on>
-        <name>
-            deviceno5
-        </name>
-    </device>
+<?xml version = "1.0"?><devices><device><pin>1</pin><enable>1</enable><on>1</on><name>device1</name></device>
+<device><pin>2</pin><enable>0</enable><on>0</on><name>device2</name></device>
+<device><pin>3</pin><enable>1</enable><on>0</on><name>device3</name></device>
+<device><pin>4</pin><enable>0</enable><on>0</on><name>device4</name></device>
+<device><pin>5</pin><enable>0</enable><on>0</on><name>device5</name></device>
+<device><pin>6</pin><enable>1</enable><on>0</on><name>device6</name></device>
+<device><pin>7</pin><enable>0</enable><on>0</on><name>device7</name></device>
+<device><pin>8</pin><enable>0</enable><on>0</on><name>device8</name></device>
+<device><pin>9</pin><enable>0</enable><on>0</on><name>device9</name></device>
+<device><pin>10</pin><enable>0</enable><on>1</on><name>device10</name></device>
 </devices>

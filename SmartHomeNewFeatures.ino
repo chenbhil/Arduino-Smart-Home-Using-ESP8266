@@ -3,8 +3,6 @@
 #include "FS.h"  //to use SPIFFS
 #include "WebAuthentication.h"
 #include "ssidAndPass.h"
-
-//#include "pgmspace.h"
 #define HTTPuser "123"
 #define HTTPpass "123"
 #define maxDevices 10
@@ -15,14 +13,14 @@ class Device {
     int ON;//On or off?
     String itsName;//name
 };
-
+//functions......................................................................
 void XML_response_new(WiFiClient cl);
-IPAddress ip(10, 0, 0, 13);
-Device device[maxDevices];
 void serveFileToClient(String fileFromHTTP, WiFiClient cl);
 void XML_response(WiFiClient cl);
 void SetLEDs(void);
+//functions......................................................................
 String req;
+Device device[maxDevices];
 uint8_t MAC_array[6];
 char MAC_char[18];
 const char* ssid = ssidFromInclude;
@@ -56,7 +54,7 @@ void setup()
   pinMode(SWITCH3, INPUT);
   Serial.begin(115200);       // for debugging
   delay(10);
-
+  
   WiFi.macAddress(MAC_array);
   for (int i = 0; i < sizeof(MAC_array); ++i) {
     sprintf(MAC_char, "%s%02x:", MAC_char, MAC_array[i]);
@@ -113,7 +111,8 @@ void setup()
     Serial.println(devicesFile.readStringUntil('|'));
     Serial.println(devicesFile.readStringUntil('|'));
     Serial.println(devicesFile.readStringUntil('\n'));
-  */devicesFile.close();
+  */
+  devicesFile.close();
 }
 
 void loop() {
@@ -198,7 +197,6 @@ void loop() {
     client.println("Connection: keep-alive");
     client.println();
     Serial.println("HTTP RESPONSE ENDED");
-    SetLEDs();
     // send XML file containing input states
     XML_response_new(client);
     Serial.println("New XML Sent");
@@ -301,8 +299,8 @@ void XML_response(WiFiClient cl)
   cl.print("</inputs>");
 
   Serial.println("XML function ended");
-
 }
+
 void SetLEDs(void)
 { Serial.println("leds started");
   int n = 1;
@@ -365,7 +363,22 @@ void serveFileToClient(String fileFromHTTP, WiFiClient cl) {
   File webFile = SPIFFS.open(fileFromHTTP, "r");        // open web page file
   if (webFile) {
     cl.println("HTTP/1.1 200 OK");
-    cl.println("Content-Type: text/html");
+    Serial.print("siomet:");
+    String fileExtension = fileFromHTTP.substring(fileFromHTTP.indexOf('.'), fileFromHTTP.length());
+    Serial.println(fileExtension);
+
+    if (fileExtension = ".html") {
+      cl.println("Content-Type: text/html");
+    }
+    else if (fileExtension = ".xml") {
+      cl.println("Content-Type: text/xml");
+    }
+    else if (fileExtension = ".ico") {
+      cl.println("Content-Type: image/x-icon");
+    }
+    else {
+      cl.println("Content-Type: text/plain");
+    }
     cl.println("Connection: keep-alive");
     cl.println();
     while (webFile.available()) {
@@ -433,4 +446,7 @@ void XML_response_new(WiFiClient cl)
   Serial.println("XML function ended");
 
 }
-//}
+/*void XMLread(String fileName, String tagName, String serialNum){
+  File XMLfile = fileName
+  }
+*/

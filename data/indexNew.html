@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Arduino Ajax I/O</title>
+    
+	<style>
+		.IO_box {
+			float: left;
+			margin: 0 20px 20px 0;
+			border: 1px solid blue;
+			padding: 0 5px 0 5px;
+			width: 120px;
+		}
+		h1 {
+			font-size: 120%;
+			color: blue;
+			margin: 0 0 10px 0;
+		}
+		h2 {
+			font-size: 85%;
+			color: #5734E6;
+			margin: 5px 0 5px 0;
+		}
+		p, form, button {
+			font-size: 80%;
+			color: #252525;
+		}
+		.small_text {
+			font-size: 70%;
+			color: #737373;
+		}
+	</style>
+    </head>
+    <body onload="GetArduinoIO()"> <!--onload="GetArduinoIO()"-->
+        <h1>Arduino Ajax I/O</h1>
+        <div style="display: inline-block;">
+		<div class="IO_box">
+			<h2 class="device">Device 1</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        		<div class="IO_box">
+			<h2 class="device">Device 2</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+		<div class="IO_box">
+			<h2 class="device">Device 3</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        <div class="IO_box">
+			<h2 class="device">Device 4</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        		<div class="IO_box">
+			<h2 class="device">Device 5</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        </div>
+        <div style="display:block;">
+        		<div class="IO_box">
+			<h2 class="device">Device 6</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+		<div class="IO_box">
+			<h2 class="device">Device 7</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        <div class="IO_box">
+			<h2 class="device">Device 8</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+		<div class="IO_box">
+			<h2 class="device">Device 9</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        <div class="IO_box">
+			<h2 class="device">Device 10</h2>
+            <p>pin: <span class="pin">...</span></p>
+            <p>enable: <span class="enable">...</span></p>
+            <p>on: <span class="on">...</span></p>
+        </div>
+        </div>
+        <a href = "controlPanel.html">Control - Panel</a>
+    </body>
+      <script>
+            function GetArduinoIO()
+		{
+			nocache = "&nocache=" + Math.random() * 1000000;
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function()
+			{
+				if (this.readyState == 4) {
+					if (this.status == 200) {
+                        if (this.responseXML != null) {
+                            for (var i=0; i<10 ; i++){
+						//	document.getElementsByClassName("device")[i].innerHTML = this.responseXML.getElementsByTagName('name')[i].childNodes[0].nodeValue;
+							document.getElementsByClassName("pin")[i].innerHTML = this.responseXML.getElementsByTagName('pin')[i].childNodes[0].nodeValue;
+							document.getElementsByClassName("enable")[i].innerHTML = this.responseXML.getElementsByTagName('enable')[i].childNodes[0].nodeValue;
+							document.getElementsByClassName("on")[i].innerHTML = this.responseXML.getElementsByTagName('on')[i].childNodes[0].nodeValue;
+							}			}
+					}
+				}
+			}
+            request.open("GET", "ajax_inputss" + nocache, true);
+			request.send(null);
+            setTimeout('GetArduinoIO()', 5000);
+        }
+	</script>
+</html>
